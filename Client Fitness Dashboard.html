@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidence-Based Fitness Client Dashboard</title>
+    <style>
+        :root {
+            --color-primary: #208090;
+            --color-secondary: rgba(94, 82, 64, 0.12);
+            --color-bg: #fcfcf9;
+            --color-surface: #fffff5;
+            --color-text: #134252;
+            --color-text-secondary: #626c71;
+            --color-success: #208090;
+            --color-error: #c01527;
+            --color-warning: #a84b2f;
+            --color-border: rgba(94, 82, 64, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.5;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: var(--color-text);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: var(--color-text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .guide-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .guide-btn {
+            padding: 12px 24px;
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .guide-btn:hover {
+            background-color: #1a6b7a;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 18px;
+            background-color: var(--color-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            color: var(--color-text);
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-btn.active {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .nav-btn:hover {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .faq-section {
+            display: none;
+        }
+
+        .faq-section.active {
+            display: block;
+        }
+
+        .faq-category {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--color-border);
+            padding: 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            padding: 18px;
+            cursor: pointer;
+            background-color: var(--color-surface);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .faq-question:hover {
+            background-color: rgba(32, 128, 144, 0.05);
+        }
+
+        .faq-icon {
+            font-size: 1.3em;
+            color: var(--color-primary);
+            transition: transform 0.3s;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: rgba(32, 128, 144, 0.03);
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 2000px;
+        }
+
+        .faq-answer-content {
+            padding: 20px 18px;
+            line-height: 1.7;
+            color: var(--color-text);
+        }
+
+        .faq-answer-content strong {
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .faq-answer-content ul {
+            margin: 12px 0 12px 20px;
+        }
+
+        .faq-answer-content li {
+            margin-bottom: 8px;
+        }
+
+        .citation {
+            font-size: 0.9em;
+            color: var(--color-text-secondary);
+            font-style: italic;
+            margin-top: 12px;
+        }
+
+        .highlight {
+            background-color: rgba(32, 128, 144, 0.1);
+            padding: 15px;
+            border-left: 4px solid var(--color-primary);
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            color: var(--color-text);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--color-primary);
+        }
+
+        .faq-header {
+            background: linear-gradient(135deg, #208090 0%, #1a6b7a 100%);
+            color: white;
+            padding: 20px 18px;
+            margin-bottom: 0;
+        }
+
+        .faq-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .download-section {
+            background-color: rgba(32, 128, 144, 0.08);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .download-section h3 {
+            color: var(--color-text);
+            margin-bottom: 15px;
+        }
+
+        .download-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .download-link {
+            background-color: white;
+            padding: 15px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--color-primary);
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .download-link:hover {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid var(--color-border);
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: 0.95em;
+        }
+
+        .source-note {
+            background-color: rgba(94, 82, 64, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: var(--color-text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+
+            .guide-links {
+                flex-direction: column;
+            }
+
+            .guide-btn {
+                width: 100%;
+            }
+
+            .download-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💪 Your Fitness Success Guide</h1>
+            <p class="subtitle">Everything You Need to Know About Building Muscle, Losing Fat & Getting Healthier</p>
+            <p style="color: var(--color-text-secondary); margin-bottom: 15px;">
+                Science-backed answers to your biggest fitness questions
+            </p>
+            <div class="guide-links">
+                <a href="#" class="guide-btn" onclick="downloadGuide('nutrition'); return false;">📋 Download Nutrition 101</a>
+                <a href="#" class="guide-btn" onclick="downloadGuide('exercise'); return false;">📋 Download Exercise 101</a>
+            </div>
+        </header>
+
+        <div class="nav-buttons" id="navButtons">
+            <button class="nav-btn active" onclick="showSection('nutrition-faq')">My Nutrition Questions</button>
+            <button class="nav-btn" onclick="showSection('training-faq')">My Training Questions</button>
+            <button class="nav-btn" onclick="showSection('general-faq')">My Health Questions</button>
+            <button class="nav-btn" onclick="showSection('supplements-faq')">My Supplement Questions</button>
+            <button class="nav-btn" onclick="showSection('nutrition-guide')">📘 Nutrition Guide</button>
+            <button class="nav-btn" onclick="showSection('exercise-guide')">📗 Training Guide</button>
+        </div>
+
+        <!-- NUTRITION FAQ SECTION -->
+        <div id="nutrition-faq" class="faq-section active">
+            <h2 class="section-title">🥗 Nutrition & Diet Frequently Asked Questions</h2>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Calorie Balance & Weight Loss</h3></div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How many calories should I eat to lose fat?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Short answer:</strong> A moderate deficit of 300-500 calories below your maintenance level, which typically results in 0.5-1 lb per week of fat loss.</p>
+                            <p><strong>How to calculate:</strong></p>
+                            <ul>
+                                <li>Determine your maintenance calories (roughly: bodyweight in lbs × 15-16 for moderate activity)</li>
+                                <li>Subtract 300-500 from that number</li>
+                                <li>Track intake for 2-3 weeks, adjust if progress stalls</li>
+                            </ul>
+                            <p><strong>Why not more aggressive?</strong> Larger deficits cause:</p>
+                            <ul>
+                                <li>Greater muscle loss (even with training)</li>
+                                <li>Worse adherence (excessive hunger)</li>
+                                <li>More metabolic adaptation</li>
+                                <li>No faster fat loss long-term due to non-adherence</li>
+                            </ul>
+                            <div class="highlight">
+                                <strong>💡 Pro tip:</strong> Consistency with a moderate deficit beats perfection with an aggressive one. It's the diet you'll actually follow that works.
+                            </div>
+                            <div class="citation">Based on research from Eric Trexler (MASS) and Alan Aragon</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Does calorie counting work? Do I have to do it forever?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Does it work?</strong> Yes—it's the most reliable way to ensure you're hitting your calorie target.</p>
+                            <p><strong>Do you need it forever?</strong> No, not necessarily. Use it as a learning tool:</p>
+                            <ul>
+                                <li><strong>Phase 1 (4-8 weeks):</strong> Track everything to learn portion sizes and calorie density of foods</li>
+                                <li><strong>Phase 2 (ongoing):</strong> Use hand portions, visual guides, or intuitive eating based on what you learned</li>
+                                <li><strong>Check-ins:</strong> Return to tracking if progress stalls or goals change</li>
+                            </ul>
+                            <p><strong>Alternative methods if tracking feels unsustainable:</strong></p>
+                            <ul>
+                                <li>Hand-based portions (fist-sized carbs, palm-sized protein)</li>
+                                <li>Container/measuring cup portions</li>
+                                <li>Intuitive eating (for experienced individuals)</li>
+                            </ul>
+                            <div class="citation">Recommended by Jordan Syatt and evidence-based coaches for behavior change</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Protein & Macronutrients</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How much protein should I eat?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Recommendation: 1.6-2.2 grams per kilogram of body weight daily</strong></p>
+                            <p><strong>In pounds:</strong> 0.7-1.0 grams per pound of body weight</p>
+                            <p><strong>Examples:</strong></p>
+                            <ul>
+                                <li>150 lb person: 105-150g protein/day</li>
+                                <li>200 lb person: 140-200g protein/day</li>
+                                <li>250 lb person: 175-250g protein/day</li>
+                            </ul>
+                            <p><strong>Important notes:</strong></p>
+                            <ul>
+                                <li>Higher amounts (>2.2 g/kg) don't provide additional muscle-building benefits</li>
+                                <li>During fat loss, adequate protein helps preserve muscle mass</li>
+                                <li>Total daily protein matters more than timing of individual meals</li>
+                                <li>Spreading across 4-5 meals is practical but not mandatory</li>
+                            </ul>
+                            <div class="highlight">
+                                <strong>💡 Bottom line:</strong> Getting "enough" protein is important. Going way above won't help—effort is better spent on training and calories.
+                            </div>
+                            <div class="citation">Based on meta-analyses from Eric Helms, Eric Trexler, and Alan Aragon</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How many carbs should I eat?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Standard recommendation: 3-4 grams per kilogram of body weight daily</strong> (for gym-focused individuals)</p>
+                            <p><strong>Why this amount?</strong> Carbs fuel training performance, especially for higher-volume workouts.</p>
+                            <p><strong>Context matters:</strong></p>
+                            <ul>
+                                <li><strong>High-volume training (bodybuilding, CrossFit):</strong> 4+ g/kg beneficial</li>
+                                <li><strong>Moderate training (3-4x/week, moderate volume):</strong> 3-4 g/kg</li>
+                                <li><strong>Low-volume strength training (powerlifting):</strong> 2-3 g/kg can work</li>
+                                <li><strong>During fat loss:</strong> May tolerate lower carbs (2-3 g/kg), but performance may suffer</li>
+                            </ul>
+                            <p><strong>Are low-carb diets bad?</strong> No—they can work for fat loss. But:</p>
+                            <ul>
+                                <li>They work through creating a calorie deficit, not metabolic advantage</li>
+                                <li>Training performance often suffers</li>
+                                <li>Most people feel better and perform better on adequate carbs</li>
+                            </ul>
+                            <div class="citation">Based on recent muscle glycogen research from Eric Trexler and MASS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do I need dietary fat? Can I eat a low-fat diet?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Minimum fat intake: 0.8-1.2 g/kg body weight (or 20-30% of total calories)</strong></p>
+                            <p><strong>Why fat matters:</strong></p>
+                            <ul>
+                                <li><strong>Hormone production:</strong> Testosterone, estrogen, and other hormones require dietary fat</li>
+                                <li><strong>Vitamin absorption:</strong> Fat-soluble vitamins (A, D, E, K) need fat for absorption</li>
+                                <li><strong>Gallstone prevention:</strong> Very low fat (<7g/day) during extreme diets increases gallstone risk</li>
+                                <li><strong>Satiety:</strong> Fat helps you feel full longer</li>
+                            </ul>
+                            <p><strong>Research shows:</strong> Fat intake below 20% of calories associated with reduced testosterone in men and reduced estrogen in women.</p>
+                            <p><strong>Practical application:</strong> Aim for at least 50-60g of fat daily for most people; don't fear it.</p>
+                            <div class="citation">Based on meta-analysis by Eric Trexler in MASS September 2023</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Nutrition Timing & Meal Frequency</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do I need to eat within 30 minutes after working out?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Short answer: Not really. The "anabolic window" is largely a myth.</strong></p>
+                            <p><strong>What research shows:</strong></p>
+                            <ul>
+                                <li>Muscle protein synthesis is elevated for several hours after training</li>
+                                <li>Eating within 2 hours is fine; timing within 30 min doesn't matter</li>
+                                <li>Total daily protein and calories matter FAR more than meal timing</li>
+                            </ul>
+                            <p><strong>Practical advice:</strong> Eat something convenient containing protein and carbs within a few hours. That's it.</p>
+                            <p><strong>Real benefit of post-workout eating:</strong> If you're hungry or prefer eating post-workout, it can help you hit your daily macros.</p>
+                            <div class="citation">Confirmed by Schoenfeld et al. and covered in MASS Research Review</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How many meals per day should I eat?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>The honest answer: It doesn't matter much. Pick what you prefer.</strong></p>
+                            <p><strong>What matters instead:</strong></p>
+                            <ul>
+                                <li>Total daily calories and protein</li>
+                                <li>Adherence (eating pattern you can stick with)</li>
+                                <li>Personal preference and hunger patterns</li>
+                            </ul>
+                            <p><strong>Common approaches:</strong></p>
+                            <ul>
+                                <li><strong>3 meals/day:</strong> Traditional, works well for most</li>
+                                <li><strong>4-5 meals/day:</strong> Better for high protein intake; allows smaller portions</li>
+                                <li><strong>Intermittent fasting (1-2 meals/day):</strong> Works for adherence in some people; no metabolic advantage</li>
+                            </ul>
+                            <p><strong>Bottom line:</strong> Use meal frequency to help you hit your targets and feel good. Change it only if current approach isn't working.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Should I try intermittent fasting?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Does it work for fat loss?</strong> Yes—IF you create a calorie deficit. It has no metabolic advantage.</p>
+                            <p><strong>Potential benefits:</strong></p>
+                            <ul>
+                                <li>Easier to hit calorie targets (fewer eating windows)</li>
+                                <li>May reduce hunger for some people</li>
+                                <li>Simplifies meal planning</li>
+                            </ul>
+                            <p><strong>Potential downsides:</strong></p>
+                            <ul>
+                                <li>May increase hunger for others</li>
+                                <li>Can negatively impact training performance (harder to fuel properly)</li>
+                                <li>Makes hitting adequate protein more challenging</li>
+                                <li>Doesn't preserve muscle during fat loss better than normal eating</li>
+                            </ul>
+                            <p><strong>Bottom line:</strong> Try it if you think you'd prefer it. If you don't like it, normal eating patterns work equally well.</p>
+                            <div class="citation">Based on research from Alan Aragon and MASS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Food Choices & Diet Quality</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I eat "junk food" and still get results?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>For fat loss: Yes, if calories and protein are adequate.</strong></p>
+                            <p><strong>What research shows:</strong></p>
+                            <ul>
+                                <li>Body composition is determined by calories and protein, not food quality</li>
+                                <li>A calorie is a calorie for weight change (though not for other health markers)</li>
+                                <li>You can lose fat eating processed foods if you maintain proper calories</li>
+                            </ul>
+                            <p><strong>BUT—whole foods are superior for:</strong></p>
+                            <ul>
+                                <li><strong>Satiety:</strong> Whole foods keep you fuller longer (easier to stick to diet)</li>
+                                <li><strong>Health:</strong> Better for blood lipids, blood sugar, micronutrient status</li>
+                                <li><strong>Energy:</strong> Better sustained energy throughout day</li>
+                                <li><strong>Adherence:</strong> Consistent diet quality makes adherence easier</li>
+                            </ul>
+                            <p><strong>The balanced approach:</strong> Eat ~80% whole, nutrient-dense foods; 20% flexible for enjoyment and adherence.</p>
+                            <div class="citation">Recommended by Jordan Syatt, Andrew Coates, and evidence-based coaches</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="download-section">
+                <h3>📚 Want the Full Breakdown?</h3>
+                <p>Get your complete <strong>Nutrition Guide</strong> with everything about calories, macros, micronutrients, supplements, and meal planning that actually works.</p>
+                <div class="download-links">
+                    <a href="#" class="download-link" onclick="downloadGuide('nutrition'); return false;">
+                        📥 Download My Nutrition Guide
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRAINING FAQ SECTION -->
+        <div id="training-faq" class="faq-section">
+            <h2 class="section-title">🏋️ Training & Exercise Frequently Asked Questions</h2>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Progressive Overload & Muscle Growth</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What's the most important thing for building muscle?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Progressive overload—gradually increasing training stress over time.</strong></p>
+                            <p><strong>What this means:</strong> Incrementally add weight, reps, sets, or training frequency to challenge your muscles.</p>
+                            <p><strong>Examples:</strong></p>
+                            <ul>
+                                <li>Bench press: 185 lbs × 5 this week, 190 lbs × 5 next week</li>
+                                <li>Leg press: 8 reps × 3 sets this week, 8 reps × 4 sets next week</li>
+                                <li>Training frequency: squats 1x/week, progress to 2x/week</li>
+                            </ul>
+                            <p><strong>How fast should you progress?</strong></p>
+                            <ul>
+                                <li><strong>Beginners:</strong> Can progress weekly (5-10 lb increases possible)</li>
+                                <li><strong>Intermediate:</strong> Progress every 2-3 weeks (2-5 lb increases realistic)</li>
+                                <li><strong>Advanced:</strong> Progress monthly or slower (1-2% increases)</li>
+                            </ul>
+                            <p><strong>Without progressive overload, no muscle growth occurs.</strong> This is the foundation.</p>
+                            <div class="citation">Based on research from Brad Schoenfeld and supported by MASS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How many sets and reps should I do?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>For muscle growth:</strong> 6-25+ sets per muscle group per week, with rep ranges from 5-30 reps.</p>
+                            <p><strong>More detailed breakdown:</strong></p>
+                            <ul>
+                                <li><strong>Beginners:</strong> 6-10 sets per muscle per session × 1-2x/week</li>
+                                <li><strong>Intermediate:</strong> 10-15 sets per muscle per session × 2x/week</li>
+                                <li><strong>Advanced:</strong> 15-25+ sets per muscle per session × 2-3x/week</li>
+                            </ul>
+                            <p><strong>Rep range recommendations:</strong></p>
+                            <ul>
+                                <li><strong>Heavy (3-6 reps):</strong> Targets strength and Type II fibers</li>
+                                <li><strong>Moderate (6-12 reps):</strong> Best for hypertrophy; sweet spot for most</li>
+                                <li><strong>High (12+ reps):</strong> Great for isolation; requires less recovery</li>
+                            </ul>
+                            <p><strong>Key finding:</strong> Muscle growth occurs across ALL rep ranges if volume is adequate.</p>
+                            <p><strong>Practical approach:</strong> Include variety (mix 6-8 reps, 8-12 reps, 12+ reps per muscle group).</p>
+                            <div class="citation">Based on dose-response research from Schoenfeld et al.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Training Frequency & Recovery</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Should I train each muscle once or twice per week?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Quick answer: Twice per week is slightly better, but once per week with adequate volume works.</strong></p>
+                            <p><strong>What research shows:</strong></p>
+                            <ul>
+                                <li>Training muscle 2x/week produces ~10-15% more growth than 1x/week</li>
+                                <li>The benefit decreases with higher frequency (3x/week offers only 5-10% additional benefit over 2x)</li>
+                                <li>Total weekly volume matters more than frequency</li>
+                            </ul>
+                            <p><strong>Practical implications:</strong></p>
+                            <ul>
+                                <li><strong>Beginners:</strong> 1x per week (full-body 3x/week) is fine for starting</li>
+                                <li><strong>Intermediate:</strong> 2x per week (upper-lower split) is ideal</li>
+                                <li><strong>Advanced:</strong> 2-3x per week (body part split or push-pull-legs)</li>
+                            </ul>
+                            <p><strong>Bottom line:</strong> Use frequency to help you accumulate adequate volume without excessive fatigue.</p>
+                            <div class="citation">Research from Schoenfeld et al. covered in MASS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How much rest do I need between workouts?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Between sets:</strong></p>
+                            <ul>
+                                <li><strong>Heavy compound (6 reps or less):</strong> 3-5 minutes</li>
+                                <li><strong>Moderate (6-12 reps):</strong> 2-3 minutes</li>
+                                <li><strong>Light isolation (12+ reps):</strong> 60-90 seconds</li>
+                            </ul>
+                            <p><strong>Between training sessions for same muscle:</strong> 48-72 hours minimum</p>
+                            <p><strong>Sleep:</strong> 7-9 hours nightly for optimal recovery</p>
+                            <p><strong>What research shows about recovery modalities:</strong></p>
+                            <ul>
+                                <li>Active recovery (light walking, easy cycling): Minimal benefit</li>
+                                <li>Foam rolling: Minimal benefit for muscle recovery (though good for mobility)</li>
+                                <li>Stretching: Limited benefit; focus on strength training instead</li>
+                            </ul>
+                            <p><strong>Bottom line:</strong> Most "recovery tools" don't matter much. Sleep and adequate calories matter more.</p>
+                            <div class="citation">Based on reviews from Michael Zourdos in MASS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What is a deload and when should I take one?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>What is a deload?</strong> A planned week of reduced training volume (typically 40-60% less sets) while maintaining weight/intensity.</p>
+                            <p><strong>When to take one:</strong></p>
+                            <ul>
+                                <li>Every 4-6 weeks of hard training</li>
+                                <li>When strength plateaus or decreases</li>
+                                <li>When experiencing excessive fatigue or joint pain</li>
+                                <li>When motivation drops significantly</li>
+                            </ul>
+                            <p><strong>What happens during deload:</strong></p>
+                            <ul>
+                                <li>Nervous system recovers</li>
+                                <li>Joint stress reduces</li>
+                                <li>Inflammation decreases</li>
+                                <li>You're refreshed for next training block</li>
+                            </ul>
+                            <p><strong>Research shows:</strong> Deloading prevents overtraining and enables continued progress; even improved progress in following weeks.</p>
+                            <div class="citation">Evidence supports deloading for long-term progress (MASS and Alan Aragon)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Form & Exercise Selection</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Does form need to be perfect to build muscle?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>No—good-enough form with progressive overload beats perfect form with no progress.</strong></p>
+                            <p><strong>What matters for form:</strong></p>
+                            <ul>
+                                <li>Moving through a reasonable range of motion</li>
+                                <li>Controlling the weight (not bouncing or using momentum)</li>
+                                <li>Feeling tension in the target muscle</li>
+                            </ul>
+                            <p><strong>Common form mistakes to avoid:</strong></p>
+                            <ul>
+                                <li>Using weight too heavy (momentum does work, not muscle)</li>
+                                <li>Reduced range of motion significantly</li>
+                                <li>Bouncing reps (removes tension)</li>
+                                <li>Rapid, uncontrolled reps</li>
+                            </ul>
+                            <p><strong>Reality:</strong> Most people benefit from slightly lighter weight with controlled reps than heavy weight with poor form.</p>
+                            <p><strong>Bottom line:</strong> Start with weight you can control; focus on movement quality and progressive overload.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is full range of motion necessary?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>For most people: Yes. Full ROM produces better results.</strong></p>
+                            <p><strong>What research shows:</strong></p>
+                            <ul>
+                                <li>Full range of motion produces more hypertrophy than partial ROM</li>
+                                <li>Produces greater strength gains</li>
+                                <li>Better for long-term joint health (improves mobility)</li>
+                            </ul>
+                            <p><strong>Exceptions:</strong></p>
+                            <ul>
+                                <li>Joint pain: Stop before pain occurs</li>
+                                <li>Injury/mobility limitations: Work within safe range</li>
+                                <li>Advanced technique (partials) as supplement to full ROM training</li>
+                            </ul>
+                            <p><strong>Bottom line:</strong> Aim for full ROM when trained and stable; don't force it if you have mobility issues.</p>
+                            <div class="citation">Based on ROM research supporting full movement patterns</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Training to Failure</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Should I train to failure every set?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>For heavy compounds: No. For isolation: Can work but unnecessary.</strong></p>
+                            <p><strong>What research shows:</strong></p>
+                            <ul>
+                                <li>Training to failure produces hypertrophy</li>
+                                <li>Training 2-3 reps short of failure produces equal hypertrophy if volume is matched</li>
+                                <li>Failure in heavy compounds increases injury risk without additional benefit</li>
+                            </ul>
+                            <p><strong>Practical approach:</strong></p>
+                            <ul>
+                                <li><strong>Heavy compounds (squats, deadlifts, bench):</strong> Stop 2-3 reps short of failure</li>
+                                <li><strong>Moderate compounds (dumbbell press, rows):</strong> Can go to failure on final set</li>
+                                <li><strong>Isolation exercises:</strong> Can train closer to failure regularly</li>
+                            </ul>
+                            <p><strong>Using RPE (Rate of Perceived Exertion):</strong></p>
+                            <ul>
+                                <li>RPE 7-8 (2-3 reps short of failure): Safe for all</li>
+                                <li>RPE 9-10 (0-1 reps short/at failure): For final sets of isolation work</li>
+                            </ul>
+                            <p><strong>Bottom line:</strong> Adequate training stress (not necessarily failure) is what matters.</p>
+                            <div class="citation">Research from Schoenfeld and confirmed by MASS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="download-section">
+                <h3>📚 Ready to Learn More?</h3>
+                <p>Download our comprehensive <strong>Exercise 101 Guide</strong> covering training principles, periodization, sample programs, recovery, and evidence-based training recommendations.</p>
+                <div class="download-links">
+                    <a href="#" class="download-link" onclick="downloadGuide('exercise'); return false;">
+                        📥 Download Exercise 101 (Markdown)
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- GENERAL HEALTH FAQ SECTION -->
+        <div id="general-faq" class="faq-section">
+            <h2 class="section-title">❤️ General Health & Lifestyle Frequently Asked Questions</h2>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Sleep & Recovery</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How much sleep do I need?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Optimal: 7-9 hours per night.</strong></p>
+                            <p><strong>How sleep impacts training:</strong></p>
+                            <ul>
+                                <li><strong>Less than 6 hours:</strong> 15-20% reduction in strength gain and muscle growth potential</li>
+                                <li><strong>7-9 hours:</strong> Optimal recovery and adaptation</li>
+                                <li><strong>More than 9 hours:</strong> Diminishing returns</li>
+                            </ul>
+                            <p><strong>Why sleep matters:</strong></p>
+                            <ul>
+                                <li>Muscle protein synthesis (building muscle)</li>
+                                <li>Growth hormone release</li>
+                                <li>Testosterone production (men and women)</li>
+                                <li>Glycogen replenishment</li>
+                                <li>Mental health and mood</li>
+                            </ul>
+                            <p><strong>Tips for better sleep:</strong></p>
+                            <ul>
+                                <li>Consistent sleep schedule (same bedtime/wake time)</li>
+                                <li>Dark, cool room (65-68°F)</li>
+                                <li>No screens 30-60 min before bed</li>
+                                <li>Avoid caffeine after 2 PM</li>
+                            </ul>
+                            <div class="citation">Based on research from Mah et al. and others</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Hydration & Minerals</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How much water should I drink daily?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>General guideline: 35 ml per kilogram of body weight</strong></p>
+                            <p><strong>Examples:</strong></p>
+                            <ul>
+                                <li>150 lb person (68 kg): ~2.4 liters/day</li>
+                                <li>200 lb person (91 kg): ~3.2 liters/day</li>
+                            </ul>
+                            <p><strong>Adjustments for training:</strong></p>
+                            <ul>
+                                <li>Add 500 ml per hour of exercise</li>
+                                <li>More in hot/humid environments</li>
+                                <li>Individual sweat rates vary—test yours</li>
+                            </ul>
+                            <p><strong>How to monitor hydration:</strong></p>
+                            <ul>
+                                <li><strong>Urine color:</strong> Pale yellow = well hydrated; dark = dehydrated</li>
+                                <li><strong>Body weight:</strong> Shouldn't drop more than 2% during workout</li>
+                                <li><strong>Thirst:</strong> Drink when thirsty (though wait for very hard efforts)</li>
+                            </ul>
+                            <p><strong>During exercise:</strong></p>
+                            <ul>
+                                <li><strong>Short efforts (<60 min):</strong> Water is sufficient</li>
+                                <li><strong>Longer efforts (>60 min):</strong> Add carbs (30-60g/hour) and sodium</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Weight Tracking & Body Composition</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Why does my weight fluctuate daily?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Weight fluctuates 3-5 lbs daily due to normal variations; only track trends.</strong></p>
+                            <p><strong>Causes of daily fluctuation:</strong></p>
+                            <ul>
+                                <li><strong>Water retention:</strong> Carbs, sodium, hormones, training all affect water</li>
+                                <li><strong>Digestion:</strong> Food in stomach/intestines weighs something</li>
+                                <li><strong>Hormones:</strong> Menstrual cycle can increase water retention 3-5 lbs</li>
+                                <li><strong>Training:</strong> Muscle damage causes inflammation and water retention</li>
+                            </ul>
+                            <p><strong>How to track properly:</strong></p>
+                            <ul>
+                                <li>Weigh yourself consistently (same time of day, preferably morning)</li>
+                                <li>Track weekly averages, not daily weights</li>
+                                <li>Expect weight to fluctuate; this is normal</li>
+                                <li>Use multiple metrics: weight, photos, measurements, performance</li>
+                            </ul>
+                            <p><strong>Example:</strong> 0.5-1 lb weight loss per week is healthy fat loss; expect 3-5 lb daily swings.</p>
+                            <div class="citation">Clarified by Eric Trexler in MASS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUPPLEMENT FAQ SECTION -->
+        <div id="supplements-faq" class="faq-section">
+            <h2 class="section-title">💊 Supplement Frequently Asked Questions</h2>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Evidence-Based Supplements</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Which supplements actually work?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Tier 1: Highly Effective & Cost-Efficient</strong></p>
+                            <ul>
+                                <li><strong>Creatine Monohydrate:</strong> 5-10% improvement in strength and hypertrophy; $10/month</li>
+                                <li><strong>Protein Powder:</strong> Convenient protein source; no special benefit vs. whole food</li>
+                                <li><strong>Vitamin D:</strong> If deficient; supports bone health, mood, immunity</li>
+                            </ul>
+                            <p><strong>Tier 2: Modest Benefits, Context-Dependent</strong></p>
+                            <ul>
+                                <li><strong>Caffeine:</strong> 2-5% performance improvement; $5/month; timing matters</li>
+                                <li><strong>Citrulline Malate:</strong> Modest pump/endurance benefit; 6-9g pre-workout</li>
+                                <li><strong>Beta-Alanine:</strong> Benefits high-rep/repeated efforts; requires loading</li>
+                            </ul>
+                            <p><strong>Tier 3: Minimal/Inconsistent Benefits</strong></p>
+                            <ul>
+                                <li>Multi-ingredient pre-workout stacks (overlapping ingredients)</li>
+                                <li>Fat burners (minimal effect on body composition)</li>
+                                <li>BCAAs (unnecessary if adequate protein consumed)</li>
+                                <li>Most other "trending" supplements</li>
+                            </ul>
+                            <p><strong>Bottom line:</strong> Creatine, protein, vitamin D, and caffeine cover 95% of supplement benefits. Everything else is marginal.</p>
+                            <div class="citation">Based on systematic reviews from Eric Trexler in MASS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is creatine safe? Does it cause side effects?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Creatine monohydrate is extremely safe; decades of research support this.</strong></p>
+                            <p><strong>How it works:</strong></p>
+                            <ul>
+                                <li>Increases phosphocreatine stores in muscles</li>
+                                <li>Improves ATP regeneration during intense efforts</li>
+                                <li>Leads to ~5-10% improvement in strength and hypertrophy</li>
+                            </ul>
+                            <p><strong>Dosing:</strong></p>
+                            <ul>
+                                <li><strong>Simple:</strong> 5g per day, every day (no loading needed)</li>
+                                <li><strong>Optional loading (faster saturation):</strong> 20g/day for 5-7 days, then 5g/day</li>
+                            </ul>
+                            <p><strong>Potential side effects (rare):</strong></p>
+                            <ul>
+                                <li>Mild water retention (1-2 lbs)</li>
+                                <li>Digestive upset (use monohydrate, not other forms)</li>
+                            </ul>
+                            <p><strong>Does NOT cause:</strong> Kidney damage, liver damage, dehydration (in healthy people)</p>
+                            <p><strong>Cost:</strong> ~$10/month (incredibly cheap)</p>
+                            <div class="citation">Supported by International Society of Sports Nutrition</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Should I take protein powder or get protein from food?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Either works; choose based on convenience and cost.</strong></p>
+                            <p><strong>Research shows:</strong> Whey protein, whole food protein, plant protein—all produce similar muscle gains if total protein is adequate.</p>
+                            <p><strong>When protein powder is useful:</strong></p>
+                            <ul>
+                                <li>Hard to hit protein targets with food alone</li>
+                                <li>Cost-effective (cheaper than many meat sources)</li>
+                                <li>Convenient (quick shakes)</li>
+                                <li>Dietary restrictions (lactose, vegan)</li>
+                            </ul>
+                            <p><strong>When food is better:</strong></p>
+                            <ul>
+                                <li>Whole foods provide vitamins, minerals, fiber</li>
+                                <li>More satiating (helps with adherence)</li>
+                                <li>Less processed</li>
+                            </ul>
+                            <p><strong>Practical approach:</strong> Use 1-2 servings of protein powder if convenient; get rest from food. Total protein matters, not the source.</p>
+                            <div class="citation">Supported by research comparing protein sources</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What about vitamin D supplementation?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>Supplementation recommended if deficient (most people, especially in winter).</strong></p>
+                            <p><strong>Vitamin D benefits:</strong></p>
+                            <ul>
+                                <li>Bone health and calcium absorption</li>
+                                <li>Immune function</li>
+                                <li>Mood and mental health</li>
+                                <li>Muscle function</li>
+                            </ul>
+                            <p><strong>Dosing:</strong></p>
+                            <ul>
+                                <li>If deficient: 2000-4000 IU/day</li>
+                                <li>If adequate: 1000-2000 IU/day maintenance</li>
+                                <li>Get levels tested; know where you stand</li>
+                            </ul>
+                            <p><strong>Sources:</strong></p>
+                            <ul>
+                                <li>Sunlight (15-30 min daily in summer months)</li>
+                                <li>Fatty fish (salmon, mackerel, sardines)</li>
+                                <li>Fortified milk/dairy</li>
+                                <li>Supplements (if insufficient)</li>
+                            </ul>
+                            <p><strong>Cost:</strong> Very cheap (~$10-15/year)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="faq-header"><h3>Multi-Vitamins & Micronutrients</h3></div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do I need a multivitamin?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            <p><strong>For most people eating varied diet: No. For those with gaps: Maybe.</strong></p>
+                            <p><strong>Research shows:</strong> Multivitamins show minimal benefit for healthy individuals eating adequate diets.</p>
+                            <p><strong>When they might help:</strong></p>
+                            <ul>
+                                <li>Restrictive diets (very low calories, limited food variety)</li>
+                                <li>Specific deficiencies (confirmed by testing)</li>
+                                <li>Dietary restrictions (vegan: B12, iron; athlete: iron, calcium)</li>
+                            </ul>
+                            <p><strong>Better approach:</strong></p>
+                            <ul>
+                                <li>Assess diet for obvious gaps</li>
+                                <li>Get blood work if concerned</li>
+                                <li>Supplement only what's deficient</li>
+                                <li>Prioritize whole foods for micronutrients</li>
+                            </ul>
+                            <p><strong>Bottom line:</strong> Focus on food first; supplement gaps individually.</p>
+                            <div class="citation">Based on meta-analyses showing limited benefit of multivitamins</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NUTRITION 101 GUIDE SECTION -->
+        <div id="nutrition-guide" class="faq-section">
+            <h2 class="section-title">📘 Nutrition 101: Evidence-Based Essentials</h2>
+            <div class="guide-content">
+                <h3>Your Comprehensive Nutrition Resource</h3>
+                <p>This guide covers everything your clients need to know about nutrition, from calorie balance fundamentals to supplementation science—all based on peer-reviewed research.</p>
+                
+                <div class="faq-category">
+                    <div class="faq-header"><h3>Calorie Balance: The Foundation</h3></div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Why is calorie balance the most important factor?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p><strong>The Core Principle:</strong> Total energy intake versus total energy expenditure determines changes in body weight. No diet works if calories aren't appropriate for your goal, regardless of macro composition.</p>
+                                <p><strong>Practical Application:</strong> Use the Mifflin-St Jeor equation with an activity multiplier to estimate maintenance calories, then adjust based on 2-week progress.</p>
+                                <p><strong>For Fat Loss:</strong> Create a 300-500 calorie deficit for 0.5-1 lb/week loss. Avoid aggressive deficits (>25 cal/kg fat-free mass) due to muscle loss and adherence issues.</p>
+                                <p><strong>For Muscle Gain:</strong> Use a 300-500 calorie surplus. Larger surpluses don't mean more muscle—excess stores as fat.</p>
+                                <div class="citation">Based on meta-analyses from Eric Trexler (MASS) and Alan Aragon</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-category">
+                    <div class="faq-header"><h3>Macronutrient Guidelines</h3></div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What are the optimal macronutrient ratios?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p><strong>Protein: 1.6-2.2 g/kg body weight daily</strong> - Critical for muscle preservation during fat loss and muscle building during surplus.</p>
+                                <p><strong>Carbohydrates: 3-4 g/kg for gym-focused individuals</strong> - Fuel training performance; not mandatory for fat loss but most people perform better on adequate carbs.</p>
+                                <p><strong>Fat: 0.8-1.2 g/kg (minimum 20-30% of calories)</strong> - Essential for hormone production, vitamin absorption, and overall health.</p>
+                                <p><strong>Key Finding:</strong> The ratio matters far less than total calories and hitting minimum protein. Flexibility with carbs/fat is fine.</p>
+                                <div class="citation">Based on dose-response research from Eric Helms and Schoenfeld et al.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-category">
+                    <div class="faq-header"><h3>Micronutrients & Supplementation</h3></div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Which micronutrients should clients prioritize?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p><strong>Whole food sources are superior to supplements</strong> for most micronutrients because they provide vitamins, minerals, and fiber together.</p>
+                                <p><strong>Key micronutrients:</strong></p>
+                                <ul>
+                                    <li><strong>Iron:</strong> Red meat, spinach, legumes (8-18mg/day)</li>
+                                    <li><strong>Calcium:</strong> Dairy, leafy greens (1000-1200mg/day)</li>
+                                    <li><strong>Magnesium:</strong> Nuts, seeds, dark chocolate (310-420mg/day)</li>
+                                    <li><strong>Vitamin D:</strong> Sunlight, fatty fish, supplements if deficient (600-4000 IU/day)</li>
+                                </ul>
+                                <p><strong>Supplementation guidance:</strong> Multivitamins show minimal benefit for healthy people eating varied diets. Supplement only identified deficiencies.</p>
+                                <div class="citation">Based on meta-analyses from MASS and nutrition research</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="download-section">
+                    <h3>📥 Download Full Nutrition 101 Guide</h3>
+                    <p>Get the complete markdown version for offline use, sharing with clients, or printing.</p>
+                    <div class="download-links">
+                        <a href="#" class="download-link" onclick="downloadGuide('nutrition'); return false;">
+                            📥 Download Nutrition 101 (Markdown)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXERCISE 101 GUIDE SECTION -->
+        <div id="exercise-guide" class="faq-section">
+            <h2 class="section-title">📗 Exercise 101: Evidence-Based Training</h2>
+            <div class="guide-content">
+                <h3>Your Comprehensive Training Resource</h3>
+                <p>This guide covers training principles, program design, and exercise science—all grounded in peer-reviewed research and expert recommendations.</p>
+                
+                <div class="faq-category">
+                    <div class="faq-header"><h3>Training Principles Foundation</h3></div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>What are the fundamental principles of muscle growth?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p><strong>Three factors drive training adaptations (in order of importance):</strong></p>
+                                <ul>
+                                    <li><strong>Mechanical Tension:</strong> Force production and progressive overload—primary driver</li>
+                                    <li><strong>Muscle Damage:</strong> Disruption from challenging workouts</li>
+                                    <li><strong>Metabolic Stress:</strong> Metabolite accumulation (pump, burn)</li>
+                                </ul>
+                                <p><strong>Critical insight:</strong> Total volume and progressive overload matter more than any specific technique.</p>
+                                <p><strong>Progressive overload strategies:</strong> Increase weight, reps, sets, training frequency, or density over time. Without progressive overload, no adaptation occurs.</p>
+                                <div class="citation">Based on research from Brad Schoenfeld and supported by MASS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-category">
+                    <div class="faq-header"><h3>Volume & Hypertrophy</h3></div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>How much volume is needed for muscle growth?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p><strong>Volume = Sets × Reps × Load</strong> - This is the most important variable for hypertrophy.</p>
+                                <p><strong>Research-backed recommendations:</strong></p>
+                                <ul>
+                                    <li><strong>Beginners:</strong> 6-10 sets per muscle per session</li>
+                                    <li><strong>Intermediate:</strong> 10-15 sets per muscle per session</li>
+                                    <li><strong>Advanced:</strong> 15-25+ sets per muscle per session</li>
+                                </ul>
+                                <p><strong>Rep range flexibility:</strong> Hypertrophy occurs across 3-30 reps if volume is adequate. Mix rep ranges for optimal results.</p>
+                                <p><strong>Practical application:</strong> Include strength (3-6 reps), moderate (6-12 reps), and higher rep (12+ reps) work per muscle group weekly.</p>
+                                <div class="citation">Based on dose-response research from Schoenfeld et al. and covered in MASS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-category">
+                    <div class="faq-header"><h3>Training Frequency & Programming</h3></div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>How often should muscles be trained per week?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                <p><strong>Research shows: 2x per week is slightly better than 1x, but 1x with adequate volume works.</strong></p>
+                                <p><strong>Key findings:</strong></p>
+                                <ul>
+                                    <li>Training 2x/week produces ~10-15% more growth than 1x/week</li>
+                                    <li>3x/week offers only 5-10% additional benefit over 2x</li>
+                                    <li>Total weekly volume matters more than frequency</li>
+                                </ul>
+                                <p><strong>Program recommendations:</strong></p>
+                                <ul>
+                                    <li><strong>Beginners:</strong> 1x per week (full-body 3x/week)</li>
+                                    <li><strong>Intermediate:</strong> 2x per week (upper-lower split)</li>
+                                    <li><strong>Advanced:</strong> 2-3x per week (body part split or PPL)</li>
+                                </ul>
+                                <div class="citation">Research from Schoenfeld et al. covered in MASS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="download-section">
+                    <h3>📥 Download Full Exercise 101 Guide</h3>
+                    <p>Get the complete markdown version including sample programs, recovery strategies, and exercise selection guidelines.</p>
+                    <div class="download-links">
+                        <a href="#" class="download-link" onclick="downloadGuide('exercise'); return false;">
+                            📥 Download Exercise 101 (Markdown)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="source-note">
+            <strong>📚 Why You Can Trust This:</strong> Everything here is based on actual peer-reviewed research from:
+            <ul style="margin-top: 10px; margin-left: 20px;">
+                <li><strong>MASS Research Review</strong> - Top fitness science researchers (Eric Helms, Eric Trexler, Michael Zourdos)</li>
+                <li><strong>Alan Aragon's Research Review</strong> - Monthly breakdowns of nutrition science by Alan Aragon</li>
+                <li><strong>Top evidence-based coaches:</strong> Jordan Syatt, Mike Vacanti, Andrew Coates</li>
+                <li><strong>Scientific journals:</strong> Medicine & Science in Sports & Exercise, Journal of Strength and Conditioning Research, and peer-reviewed studies</li>
+            </ul>
+        </div>
+
+        <footer class="footer">
+            <p>Your complete fitness resource guide. All information is current and science-backed as of January 2026.</p>
+            <p>📥 <strong>Download your guides for offline access:</strong></p>
+            <div class="download-links" style="margin-top: 20px;">
+                <a href="#" class="download-link" onclick="downloadGuide('nutrition'); return false;">📥 Get My Nutrition Guide</a>
+                <a href="#" class="download-link" onclick="downloadGuide('exercise'); return false;">📥 Get My Training Guide</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.faq-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+            }
+
+            // Update active button
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Add click handlers to all FAQ questions
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function() {
+                    const faqItem = this.closest('.faq-item');
+                    faqItem.classList.toggle('open');
+                });
+            });
+        });
+
+        function downloadGuide(type) {
+            if (type === 'nutrition') {
+                alert('✅ Nutrition 101 Guide is ready to download!\n\nYou can now:\n1. Copy all FAQ content from this dashboard\n2. Use the comprehensive Nutrition 101 markdown file\n3. Customize for your clients\n\nNote: In your actual implementation, you would link to downloadable files here.');
+            } else if (type === 'exercise') {
+                alert('✅ Exercise 101 Guide is ready to download!\n\nYou can now:\n1. Copy all FAQ content from this dashboard\n2. Use the comprehensive Exercise 101 markdown file\n3. Include sample training programs\n4. Customize for your clients\n\nNote: In your actual implementation, you would link to downloadable files here.');
+            }
+        }
+    </script>
+</body>
+</html>
